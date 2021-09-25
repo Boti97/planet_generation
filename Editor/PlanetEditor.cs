@@ -9,7 +9,6 @@ public class PlanetEditor : Editor
     Planet planet;
     Editor shapeEditor;
     Editor colorEditor;
-    Editor noiseEditor;
 
     public override void OnInspectorGUI()
     {
@@ -27,9 +26,8 @@ public class PlanetEditor : Editor
             planet.GeneratePlanet();
         }
 
-        DrawSettingsEditor(planet.Shape, planet.OnShapeAndNoiseSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
-        DrawSettingsEditor(planet.Noise, planet.OnShapeAndNoiseSettingsUpdated, ref planet.noiseSettingsFoldout, ref noiseEditor);
-        DrawSettingsEditor(planet.Color, planet.OnColorSettingsUpdated, ref planet.colorSettingsFoldout, ref colorEditor);
+        DrawSettingsEditor(planet.ShapeSettings, planet.OnShapeAndNoiseSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
+        DrawSettingsEditor(planet.ColorSettings, planet.OnColorSettingsUpdated, ref planet.colorSettingsFoldout, ref colorEditor);
     }
 
     private void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)

@@ -6,7 +6,11 @@ using UnityEngine;
 public class ColorSettings : ScriptableObject
 {
     [SerializeField]
-    private Color planetColor;
+    private Gradient gradient;
 
-    public Color PlanetColor { get => planetColor; set => planetColor = value; }
+    [SerializeField]
+    private Material material;
+
+    public Material PlanetMaterial { get => material; set => material = value; }
+    public Gradient Gradient { get => gradient; set => gradient = value; }
 }

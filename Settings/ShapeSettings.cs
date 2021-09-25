@@ -9,5 +9,17 @@ public class ShapeSettings : ScriptableObject
     [SerializeField]
     private float radius;
 
+    [SerializeField]
+    private NoiseLayer[] noiseLayers;
+
     public float Radius { get => radius; set => radius = value; }
+    public NoiseLayer[] NoiseLayers { get => noiseLayers; set => noiseLayers = value; }
+
+    [System.Serializable]
+    public class NoiseLayer
+    {
+        public bool enabled = true;
+        public bool useFirstLayerAsMask;
+        public NoiseSettings noiseSettings;
+    }
 }

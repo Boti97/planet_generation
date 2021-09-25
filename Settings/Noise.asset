@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dc8ddc02c0c0ef4198a9750cbfb5c49, type: 3}
   m_Name: Noise
   m_EditorClassIdentifier: 
-  noiseSeed: 0.86
-  noiseAmplitude: 0.5
-  noiseRoughness: 0.175
+  noiseAmplitude: 0.56
+  noiseRoughness: 2.78
+  noiseCenter: {x: 0, y: 0, z: 0}
+  numberOfLayers: 3
+  baseRoughness: 0.24
+  persistance: 0.98
+  minimumValue: 0.49
