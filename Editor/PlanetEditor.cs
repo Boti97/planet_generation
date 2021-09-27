@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(Planet))]
+[CustomEditor(typeof(PlanetGenerator))]
 public class PlanetEditor : Editor
 {
-    Planet planet;
+    PlanetGenerator planet;
     Editor shapeEditor;
     Editor colorEditor;
+    Editor offsetPaletteEditor;
+    Editor gradientPaletteEditor;
+    Editor harmoniesPaletteEditor;
+    Editor randomWalkPaletteEditor;
+    Editor hsvPaletteEditor;
+    Editor randomMixPaletteEditor;
 
     public override void OnInspectorGUI()
     {
@@ -21,16 +27,27 @@ public class PlanetEditor : Editor
             }
         }
 
-        if(GUILayout.Button("Generate Planet"))
+        if (GUILayout.Button("Generate Planet"))
         {
             planet.GeneratePlanet();
         }
 
-        DrawSettingsEditor(planet.ShapeSettings, planet.OnShapeAndNoiseSettingsUpdated, ref planet.shapeSettingsFoldout, ref shapeEditor);
-        DrawSettingsEditor(planet.ColorSettings, planet.OnColorSettingsUpdated, ref planet.colorSettingsFoldout, ref colorEditor);
+        if (GUILayout.Button("Generate Random Palette"))
+        {
+            planet.GenerateInputWithRandom();
+        }
+
+        DrawSettingsEditor(planet.shapeSettings, planet.OnShapeAndNoiseSettingsUpdated, ref shapeEditor, ref planet.shapeSettingsFoldout);
+        DrawSettingsEditor(planet.colorSettings, planet.OnColorSettingsUpdated, ref colorEditor, ref planet.colorSettingsFoldout);
+        DrawSettingsEditor(planet.offsetPaletteSettings, planet.GenerateInputWithOffset, ref offsetPaletteEditor, ref planet.offsetPlaletteSettingsFoldout);
+        DrawSettingsEditor(planet.gradientPaletteSettings, planet.GenerateInputWithGradient, ref gradientPaletteEditor, ref planet.gradientPlaletteSettingsFoldout);
+        DrawSettingsEditor(planet.harmoniesPaletteSettings, planet.GenerateInputWithHarmonies, ref harmoniesPaletteEditor, ref planet.harmoniesPlaletteSettingsFoldout);
+        DrawSettingsEditor(planet.randomWalkPaletteSettings, planet.GenerateInputWithRandomWalk, ref randomWalkPaletteEditor, ref planet.randomWalkPlaletteSettingsFoldout);
+        DrawSettingsEditor(planet.hSVPaletteSettings, planet.GenerateInputWithHSV, ref hsvPaletteEditor, ref planet.hsvPlaletteSettingsFoldout);
+        DrawSettingsEditor(planet.randomMixPaletteSettings, planet.GenerateInputWithRandomMix, ref randomMixPaletteEditor, ref planet.randomMixPlaletteSettingsFoldout);
     }
 
-    private void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref bool foldout, ref Editor editor)
+    private void DrawSettingsEditor(Object settings, System.Action onSettingsUpdated, ref Editor editor, ref bool foldout)
     {
         if (settings != null)
         {
@@ -56,7 +73,6 @@ public class PlanetEditor : Editor
 
     private void OnEnable()
     {
-        planet = (Planet)target;
+        planet = (PlanetGenerator)target;
     }
-
 }

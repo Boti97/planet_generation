@@ -11,7 +11,7 @@ public class ColorGenerator
     public void UpdateSettings(ColorSettings color)
     {
         this.colorSettings = color;
-        if(texture == null)
+        if (texture == null)
         {
             texture = new Texture2D(textureResolution, 1);
         }
@@ -19,7 +19,7 @@ public class ColorGenerator
 
     public void UpdateElevation(MinMax elevationMinMax)
     {
-        colorSettings.PlanetMaterial.SetVector("elevation", new Vector4(elevationMinMax.Min, elevationMinMax.Max));
+        colorSettings.planetMaterial.SetVector("_elevation", new Vector4(elevationMinMax.Min, elevationMinMax.Max));
     }
 
     public void UpdateColors()
@@ -27,10 +27,10 @@ public class ColorGenerator
         Color[] colors = new Color[textureResolution];
         for (int i = 0; i < textureResolution; i++)
         {
-            colors[i] = colorSettings.Gradient.Evaluate(i / (textureResolution - 1f));
+            colors[i] = colorSettings.gradient.Evaluate(i / (textureResolution - 1f));
         }
         texture.SetPixels(colors);
         texture.Apply();
-        colorSettings.PlanetMaterial.SetTexture("_texture", texture);
+        colorSettings.planetMaterial.SetTexture("_texture", texture);
     }
 }

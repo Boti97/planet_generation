@@ -6,14 +6,8 @@ using UnityEngine;
 public class ShapeSettings : ScriptableObject
 {
     [Range(5, 10)]
-    [SerializeField]
-    private float radius;
-
-    [SerializeField]
-    private NoiseLayer[] noiseLayers;
-
-    public float Radius { get => radius; set => radius = value; }
-    public NoiseLayer[] NoiseLayers { get => noiseLayers; set => noiseLayers = value; }
+    public float radius;
+    public NoiseLayer[] noiseLayers;
 
     [System.Serializable]
     public class NoiseLayer

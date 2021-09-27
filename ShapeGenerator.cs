@@ -13,10 +13,10 @@ public class ShapeGenerator
     public void UpdateSettings(ShapeSettings shapeSettings)
     {
         this.shapeSettings = shapeSettings;
-        noiseFilters = new NoiseFilter[shapeSettings.NoiseLayers.Length];
+        noiseFilters = new NoiseFilter[shapeSettings.noiseLayers.Length];
         for (int i = 0; i < noiseFilters.Length; i++)
         {
-            noiseFilters[i] = new NoiseFilter(shapeSettings.NoiseLayers[i].noiseSettings);
+            noiseFilters[i] = new NoiseFilter(shapeSettings.noiseLayers[i].noiseSettings);
         }
         ElevationMinMax = new MinMax();
     }
@@ -29,7 +29,7 @@ public class ShapeGenerator
         if (noiseFilters.Length > 0)
         {
             firstLayerValue = noiseFilters[0].GenerateNoise(pointOnPlanet);
-            if (shapeSettings.NoiseLayers[0].enabled)
+            if (shapeSettings.noiseLayers[0].enabled)
             {
                 elevation = firstLayerValue;
             }
@@ -37,13 +37,13 @@ public class ShapeGenerator
 
         for (int i = 1; i < noiseFilters.Length; i++)
         {
-            if (shapeSettings.NoiseLayers[i].enabled)
+            if (shapeSettings.noiseLayers[i].enabled)
             {
-                float mask = (shapeSettings.NoiseLayers[i].useFirstLayerAsMask) ? firstLayerValue : 1;
+                float mask = (shapeSettings.noiseLayers[i].useFirstLayerAsMask) ? firstLayerValue : 1;
                 elevation += noiseFilters[i].GenerateNoise(pointOnPlanet) * mask;
             }
         }
-        elevation = shapeSettings.Radius * (1 + elevation);
+        elevation = shapeSettings.radius * (1 + elevation);
         ElevationMinMax.AddValue(elevation);
         return pointOnPlanet * elevation;
     }

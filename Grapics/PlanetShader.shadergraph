@@ -1533,7 +1533,7 @@
     },
     "m_Name": "Elevation Min Max",
     "m_DefaultReferenceName": "Vector2_f3a01f6c9a94465b949b49b4a183d230",
-    "m_OverrideReferenceName": "elevation",
+    "m_OverrideReferenceName": "_elevation",
     "m_GeneratePropertyBlock": true,
     "m_Precision": 0,
     "overrideHLSLDeclaration": false,

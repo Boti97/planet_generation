@@ -15,7 +15,7 @@ public class MinMax
 
     public void AddValue(float value)
     {
-        if(value > Max)
+        if (value > Max)
         {
             Max = value;
         }
