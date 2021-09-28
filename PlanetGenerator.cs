@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Random = UnityEngine.Random;
+using static ShapeSettings;
 
 public class PlanetGenerator : MonoBehaviour
 {
@@ -20,8 +21,10 @@ public class PlanetGenerator : MonoBehaviour
 
     [Range(2, 256)]
     public int resolution = 10;
-    public int seed;
+    public int inputBaseSeed;
     public float speed;
+    public enum Show { Color, Surface, Both }
+    public Show show;
     public Color[] colorPalette;
 
     //other variables
@@ -50,7 +53,19 @@ public class PlanetGenerator : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(StartShow());
+        if (show == Show.Color)
+        {
+            StartCoroutine(StartColorShow());
+        }
+        else if (show == Show.Surface)
+        {
+            StartCoroutine(StartSurfaceShow());
+        }
+        else
+        {
+            StartCoroutine(StartSurfaceAndColorShow());
+        }
+
     }
 
     private void Update()
@@ -58,7 +73,7 @@ public class PlanetGenerator : MonoBehaviour
         transform.Rotate(Vector3.up * speed * Time.deltaTime);
     }
 
-    private IEnumerator StartShow()
+    private IEnumerator StartColorShow()
     {
         GameObject text = GameObject.FindGameObjectWithTag("ShowCaseText");
         TMP_Text textMeshPro = text.GetComponent<TMP_Text>();
@@ -97,6 +112,40 @@ public class PlanetGenerator : MonoBehaviour
             randomMixPaletteSettings.color2 = Random.ColorHSV();
             randomMixPaletteSettings.color3 = Random.ColorHSV();
             GenerateInputWithRandomMix();
+            yield return new WaitForSeconds(2);
+        }
+    }
+
+    private IEnumerator StartSurfaceShow()
+    {
+        GameObject text = GameObject.FindGameObjectWithTag("ShowCaseText");
+        TMP_Text textMeshPro = text.GetComponent<TMP_Text>();
+        //showcase for random offset color generation
+        for (int i = 0; i < 15; i++)
+        {
+            inputBaseSeed = Random.Range(0, 10000);
+            textMeshPro.text = "Seed: " + inputBaseSeed;
+            RegeneratePlanetSurface();
+            yield return new WaitForSeconds(2);
+        }
+    }
+
+    private IEnumerator StartSurfaceAndColorShow()
+    {
+        GameObject text = GameObject.FindGameObjectWithTag("ShowCaseText");
+        TMP_Text textMeshPro = text.GetComponent<TMP_Text>();
+        //showcase for random offset color generation
+        for (int i = 0; i < 15; i++)
+        {
+            inputBaseSeed = Random.Range(0, 10000);
+            Random.InitState(inputBaseSeed);
+            Debug.Log("Randomization seed: " + inputBaseSeed);
+            textMeshPro.text = "Seed: " + inputBaseSeed;
+
+            randomWalkPaletteSettings.baseColor = Random.ColorHSV();
+            colorSettings.gradient = GenerateGradient(GenerateColorWithRandomWalk);
+
+            RegeneratePlanetSurface();
             yield return new WaitForSeconds(2);
         }
     }
@@ -145,6 +194,23 @@ public class PlanetGenerator : MonoBehaviour
         GeneratePlanet();
     }
 
+    public void RegeneratePlanetSurface()
+    {
+
+        Random.InitState(inputBaseSeed);
+        randomWalkPaletteSettings.baseColor = Random.ColorHSV();
+        colorSettings.gradient = GenerateGradient(GenerateColorWithRandomWalk);
+        Debug.Log("Randomization seed: " + inputBaseSeed);
+        RandomizeSurfaceInput();
+        GeneratePlanet();
+    }
+
+    public void RandomizePlanetSurfaceWithRandomSeed()
+    {
+        inputBaseSeed = Random.Range(0, 10000);
+        RegeneratePlanetSurface();
+    }
+
     public void OnColorSettingsUpdated()
     {
         Initialize();
@@ -162,8 +228,8 @@ public class PlanetGenerator : MonoBehaviour
     private Gradient GenerateGradient(Func<Color> ColorGenerationAlgorithm)
     {
         Gradient gradient = new Gradient();
-        GradientColorKey[] colorKey = new GradientColorKey[5];
-        GradientAlphaKey[] alphaKey = new GradientAlphaKey[5];
+        GradientColorKey[] colorKey = new GradientColorKey[6];
+        GradientAlphaKey[] alphaKey = new GradientAlphaKey[6];
 
         GenerateColorPalette(ColorGenerationAlgorithm);
 
@@ -186,9 +252,13 @@ public class PlanetGenerator : MonoBehaviour
         alphaKey[3].time = 0.438f;
         alphaKey[3].alpha = 1.0f;
 
-        colorKey[4].time = 1.0f;
-        alphaKey[4].time = 1.0f;
+        colorKey[4].time = 0.8f;
+        alphaKey[4].time = 0.8f;
         alphaKey[4].alpha = 1.0f;
+
+        colorKey[5].time = 1.0f;
+        alphaKey[5].time = 1.0f;
+        alphaKey[5].alpha = 1.0f;
 
         gradient.SetKeys(colorKey, alphaKey);
 
@@ -319,6 +389,88 @@ public class PlanetGenerator : MonoBehaviour
             mixRatio1 * randomMixPaletteSettings.color1.g + mixRatio2 * randomMixPaletteSettings.color2.g + mixRatio3 * randomMixPaletteSettings.color3.g,
             mixRatio1 * randomMixPaletteSettings.color1.b + mixRatio2 * randomMixPaletteSettings.color2.b + mixRatio3 * randomMixPaletteSettings.color3.b,
             255);
+    }
+
+    // ----------------------------- PLANET SURFACE RANDOMIZATION METHODS ----------------------------------
+
+    private void RandomizeSurfaceInput()
+    {
+        shapeSettings = new ShapeSettings();
+        if (inputBaseSeed > 10000)
+        {
+            inputBaseSeed = 10000;
+        }
+        if (inputBaseSeed < 0)
+        {
+            inputBaseSeed = 0;
+        }
+        Random.InitState(inputBaseSeed);
+        shapeSettings.radius = Random.Range(5, 10);
+
+        shapeSettings.noiseLayers = new NoiseLayer[3];
+        for (int i = 0; i < shapeSettings.noiseLayers.Length; i++)
+        {
+            NoiseSettings noiseSettings = new NoiseSettings();
+
+            NoiseLayer noiseLayer = new NoiseLayer();
+
+            shapeSettings.noiseLayers[i] = noiseLayer;
+
+
+            noiseLayer.noiseSettings = noiseSettings;
+            noiseLayer.enabled = true;
+            // generating the continents
+            if (i == 0)
+            {
+                noiseLayer.useFirstLayerAsMask = false;
+                noiseSettings.noiseAmplitude = Random.Range(0.1f, 0.2f);
+                noiseSettings.numberOfLayers = Random.Range(2, 4);
+                noiseSettings.noiseRoughness = Random.Range(0.2f, 1f);
+                noiseSettings.persistance = Random.Range(0.8f, 1f);
+                noiseSettings.baseRoughness = Random.Range(0.5f, 1.5f);
+                if (noiseSettings.numberOfLayers == 2)
+                {
+                    noiseSettings.minimumValue = Random.Range(0.5f, 1f);
+                }
+                else
+                {
+                    noiseSettings.minimumValue = Random.Range(0.8f, 1.5f);
+                }
+            }
+            // generating the mountains
+            else if (i == 1)
+            {
+                noiseSettings.numberOfLayers = Random.Range(2, 4);
+                noiseSettings.noiseAmplitude = Random.Range(0.1f, 0.5f);
+                noiseSettings.persistance = Random.Range(1.5f, 2f);
+                noiseSettings.noiseRoughness = Random.Range(1f, 2f);
+                noiseLayer.useFirstLayerAsMask = true;
+                noiseSettings.minimumValue = Random.Range(1.5f, 2f);
+                noiseSettings.baseRoughness = Random.Range(1f, 2f);
+            }
+            else
+            {
+                noiseSettings.numberOfLayers = Random.Range(2, 4);
+                if (noiseSettings.numberOfLayers == 2)
+                {
+                    noiseSettings.noiseAmplitude = Random.Range(1f, 3f);
+                    noiseSettings.noiseRoughness = Random.Range(1f, 2f);
+                    noiseSettings.minimumValue = Random.Range(1f, 1.5f);
+                }
+                else
+                {
+                    noiseSettings.noiseAmplitude = Random.Range(0.1f, 0.8f);
+                    noiseSettings.noiseRoughness = Random.Range(1f, 1.5f);
+                    noiseSettings.minimumValue = Random.Range(2f, 3f);
+                }
+
+                noiseSettings.persistance = Random.Range(1.5f, 2f);
+                noiseLayer.useFirstLayerAsMask = true;
+                noiseSettings.baseRoughness = Random.Range(1f, 3f);
+            }
+            noiseSettings.noiseCenter = new Vector3(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+
+        }
     }
 
     // ----------------------------- PLANET GENERATION METHODS ---------------------------------------------

@@ -27,9 +27,14 @@ public class PlanetEditor : Editor
             }
         }
 
-        if (GUILayout.Button("Generate Planet"))
+        if (GUILayout.Button("Regenerate Planet Surface With Given Seed"))
         {
-            planet.GeneratePlanet();
+            planet.RegeneratePlanetSurface();
+        }
+
+        if (GUILayout.Button("Randomize Planet Surface With Random Seed"))
+        {
+            planet.RandomizePlanetSurfaceWithRandomSeed();
         }
 
         if (GUILayout.Button("Generate Random Palette"))
